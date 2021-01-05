@@ -39,6 +39,17 @@ int main()
     if (::GetComputerName(computerName, &len))
         printf("Computer name: %ws (%u)\n", computerName, len);
 
+    SHELLEXECUTEINFO sei = { sizeof(sei) };
+    //memset(%sei, 0, sizeof(sei));
+    //sei.cbSize = sizeof(sei);
+    
+    sei.lpFile = L"c:\\windows\\win.ini";
+    sei.lpVerb = L"open";
+    sei.nShow = SW_SHOWNORMAL;
+
+    ::ShellExecuteEx(&sei);
+
+
     ///HANDLE hProcess = ::OpenProcess(PROCESS_TERMINATE, FALSE, 2552);
     //if (hProcess) {
     //    ::TerminateProcess(hProcess, 0);
