@@ -7,7 +7,7 @@
 #include <Windows.h>
 #include <stdio.h>
 
-
+#include <VersionHelpers.h>
 
 int main()
 {
