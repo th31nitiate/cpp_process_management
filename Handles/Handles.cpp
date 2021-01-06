@@ -11,18 +11,16 @@ int main()
     HANDLE hEvent = ::CreateEvent(nullptr, TRUE, FALSE, nullptr);
     printf("HANDLE: 0x%p\n", hEvent);
 
-    PROCESS_INFORMATION pi;
-    STARTUPINFO si = { sizeof(si) };
-    //WCHAR name[] = L"Notepad"; //Will search system paths to try find notepad if full path not provided
-    std::wstring name(L"Notepad "); //Use this to assist in passing the handle between process to enabel sharing
-    name += std::to_wstring((long long)hEvent);
+    HANDLE hProcess = ::OpenProcess(PROCESS_DUP_HANDLE, FALSE, 7320);
+    if (!hProcess) {
+        printf("Error opening process (%u)\n", ::GetLastError());
+        return 1;
+    }
 
-    ::SetHandleInformation(hEvent, HANDLE_FLAG_INHERIT, HANDLE_FLAG_INHERIT);
 
-    if (::CreateProcess(nullptr, (WCHAR*)name.data(), nullptr, nullptr, TRUE, 0, nullptr, nullptr, &si, &pi)) {
-        printf("PID: %u\n", pi.dwProcessId);
-        ::CloseHandle(pi.hProcess);
-        ::CloseHandle(pi.hThread);
+    HANDLE hTarget;
+    if (::DuplicateHandle(::GetCurrentProcess(), hEvent, hProcess, &hTarget, 0, FALSE, DUPLICATE_SAME_ACCESS)) {
+        printf("Success!\n");
     }
 
    //:SetPriorityClass(::GetCurrentProcess(), HIGH_PRIORITY_CLASS);
