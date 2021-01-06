@@ -8,15 +8,16 @@
 
 int main()
 {
-    HANDLE hEvent = ::CreateEvent(nullptr, TRUE, FALSE, nullptr);
+    HANDLE hEvent = ::CreateEvent(nullptr, TRUE, FALSE, L"InitialEvent");
     if (hEvent == nullptr)
         printf("Failed to create event (%u)\n", ::GetLastError());
     else {
+        ::Sleep(INFINITE);
         ::SetEvent(hEvent);
         ::CloseHandle(hEvent);
     }
 
-    ::SetPriorityClass(::GetCurrentProcess(), HIGH_PRIORITY_CLASS);
+   //:SetPriorityClass(::GetCurrentProcess(), HIGH_PRIORITY_CLASS);
 
 
 
