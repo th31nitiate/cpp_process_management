@@ -56,6 +56,9 @@ int main()
     printf("\n");
 
     for (;;) {
+
+        //Try identify why the printf values are not printing 
+        //on the same line as expected with \r
         if (!::GetPerformanceInfo(&pi, sizeof(pi)))
             break;
 
