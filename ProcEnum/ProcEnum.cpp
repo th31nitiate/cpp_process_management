@@ -1,3 +1,7 @@
+//Main thing to rtemeber is process exploere is always there to better understand what information to look for
+//The struct can then be used to further explore how to use the information in the porgrame.
+
+
 #include <Windows.h>
 #include <stdio.h>
 #include <string>
@@ -20,14 +24,55 @@ typedef struct _UNICODE_STRING {
 	PWSTR Buffer;
 } UNICODE_STRING;
 
-typedef struct _SYSTEM_PROCESS_INFORMATION {} SYSTEM_PROCESS_INFORMATION;
+typedef struct _SYSTEM_PROCESS_INFORMATION {
+	ULONG NextEntryOffset;
+	ULONG NumberOfThreads;
+	LARGE_INTEGER ReadTransferCount;
+	LARGE_INTEGER SpareLi1;
+	LARGE_INTEGER WorkingSetPrivateSize;
+	LARGE_INTEGER WriteTransferCount;
+	LARGE_INTEGER SpareLi2;
+	ULONG HardFaultCount;
+	ULONG NumberOfThreadsHighWatermark;
+	LARGE_INTEGER OtherTransferCount;
+	LARGE_INTEGER SpareLi3;
+	ULONGLONG CycleTime;
+	LARGE_INTEGER CreateTime;
+	LARGE_INTEGER UserTime;
+	LARGE_INTEGER KernelTime;
+	UNICODE_STRING ImageName;
+	int BasePriority;
+	HANDLE UniqueProcessId;
+	HANDLE InheritedFromUniqueProcessId;
+	ULONG ReadOperationCount;
+	ULONG SpareUl1;
+	ULONG HandleCount;
+	ULONG WriteOperationCount;
+	ULONG SpareUl2;
+	ULONG SessionId;
+	ULONG OtherOperationCount;
+	ULONG SpareUl3;
+	ULONG_PTR UniqueProcessKey;
+	ULONG_PTR PeakVirtualSize;
+	ULONG_PTR VirtualSize;
+	ULONG PageFaultCount;
+	ULONG_PTR PeakWorkingSetSize;
+	ULONG_PTR WorkingSetSize;
+	ULONG_PTR QuotaPeakPagedPoolUsage;
+	ULONG_PTR QuotaPagedPoolUsage;
+	ULONG_PTR QuotaPeakNonPagedPoolUsage;
+	ULONG_PTR QuotaNonPagedPoolUsage;
+	ULONG_PTR PagefileUsage;
+	ULONG_PTR PeakPagefileUsage;
+	ULONG_PTR PrivatePageCount;
+} SYSTEM_PROCESS_INFORMATION;
 
-//extern "C" NTSTATUS NTAPI NtQuerySystemInformation(
-//	_In_ SYSTEM_INFORMATION_CLASS SystemInformationClass,
-//	_Out_writes_bytes_opt_(SystemInformationLength) PVOID SystemInformation,
-//	_In_ ULONG SystemInformationLength,
-//	_Out_opt_ PULONG ReturnLength
-//);
+extern "C" NTSTATUS NTAPI NtQuerySystemInformation(
+	_In_ SYSTEM_INFORMATION_CLASS SystemInformationClass,
+	_Out_writes_bytes_opt_(SystemInformationLength) PVOID SystemInformation,
+	_In_ ULONG SystemInformationLength,
+	_Out_opt_ PULONG ReturnLength
+);
 
 
 
@@ -35,7 +80,7 @@ typedef struct _SYSTEM_PROCESS_INFORMATION {} SYSTEM_PROCESS_INFORMATION;
 //int ProcEnumWithToolhelp();
 //int ProcEnumWithWTS();
 int ProcEnumWithEnumProc();
-//int ProcEnumWithNtQuerySystem();
+int ProcEnumWithNtQuerySystem();
 
 bool EnableDebugPriviledge() { //Need to gain a better understanding of the token privileges process
 	HANDLE hToken;
@@ -91,7 +136,7 @@ int main(int argc, const char* argv[]) {
 
 		case 4:
 			printf("Using NtQuerySystemInformation... \n");
-			//return ProcEnumWithNtQuerySystem();
+			return ProcEnumWithNtQuerySystem();
 	}
 
 	printf("Unknown option.... %s\n", argv[1]);
@@ -139,4 +184,45 @@ int ProcEnumWithEnumProc() {
 	free(ids);
 	return 0;
 
+}
+
+int ProcEnumWithNtQuerySystem() {
+	// allocate large-enough buffer
+	ULONG size = 1 << 18;
+	void* buffer = nullptr;
+
+	for (;;) {
+		buffer = realloc(buffer, size);
+		if (!buffer)
+			return 1;
+
+		ULONG needed;
+		NTSTATUS status = NtQuerySystemInformation(SystemExtendedProcessInformation, buffer, size, &needed);
+		if (status == 0)
+			break;
+
+		if (status == STATUS_BUFFER_TOO_SMALL) {
+			size = needed + (1 << 12);
+			continue;
+		}
+
+		return status;
+	}
+
+	auto p = (SYSTEM_PROCESS_INFORMATION*)buffer;
+	for (;;) {
+		printf("PID: %6u PPID: %6u, Session: %u, Threads: %3u %ws\n", 
+			HandleToULong(p->UniqueProcessId), HandleToULong(p->InheritedFromUniqueProcessId),
+			p->SessionId, p->NumberOfThreads, 
+			p->ImageName.Buffer ? p->ImageName.Buffer : L""); //At some point invetigate error caused when enum specific processes as shown with InheritedFromUniqueProcess	
+		//Printf error most likely caused by issues in system process struct
+
+		if (p->NextEntryOffset == 0)
+			break;
+
+		p = (SYSTEM_PROCESS_INFORMATION*)((BYTE*)p + p->NextEntryOffset);
+	}
+	free(buffer);
+
+	return 0;
 }
