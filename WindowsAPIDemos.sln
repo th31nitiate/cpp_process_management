@@ -15,6 +15,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BasicSharing", "BasicSharin
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PrivateSharing", "PrivateSharing\PrivateSharing.vcxproj", "{608F8DCD-CF40-4DBA-AD4E-157F904F5004}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EnumToolHelp", "EnumToolHelp\EnumToolHelp.vcxproj", "{4A7B4CBF-100F-4982-B2A8-13F12B07F4FA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -85,6 +87,16 @@ Global
 		{608F8DCD-CF40-4DBA-AD4E-157F904F5004}.Release|x64.Build.0 = Release|x64
 		{608F8DCD-CF40-4DBA-AD4E-157F904F5004}.Release|x86.ActiveCfg = Release|Win32
 		{608F8DCD-CF40-4DBA-AD4E-157F904F5004}.Release|x86.Build.0 = Release|Win32
+		{4A7B4CBF-100F-4982-B2A8-13F12B07F4FA}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{4A7B4CBF-100F-4982-B2A8-13F12B07F4FA}.Debug|x64.ActiveCfg = Debug|x64
+		{4A7B4CBF-100F-4982-B2A8-13F12B07F4FA}.Debug|x64.Build.0 = Debug|x64
+		{4A7B4CBF-100F-4982-B2A8-13F12B07F4FA}.Debug|x86.ActiveCfg = Debug|Win32
+		{4A7B4CBF-100F-4982-B2A8-13F12B07F4FA}.Debug|x86.Build.0 = Debug|Win32
+		{4A7B4CBF-100F-4982-B2A8-13F12B07F4FA}.Release|Any CPU.ActiveCfg = Release|Win32
+		{4A7B4CBF-100F-4982-B2A8-13F12B07F4FA}.Release|x64.ActiveCfg = Release|x64
+		{4A7B4CBF-100F-4982-B2A8-13F12B07F4FA}.Release|x64.Build.0 = Release|x64
+		{4A7B4CBF-100F-4982-B2A8-13F12B07F4FA}.Release|x86.ActiveCfg = Release|Win32
+		{4A7B4CBF-100F-4982-B2A8-13F12B07F4FA}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
