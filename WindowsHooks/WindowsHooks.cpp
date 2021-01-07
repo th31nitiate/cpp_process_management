@@ -1,5 +1,8 @@
 // WindowsHooks.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
+//The get message system issue seems to the result of a 64bit compilation of binary
+//The program seems to work on 32bit versions of windows
+
 
 #include <Windows.h>
 #include <stdio.h>
@@ -93,7 +96,6 @@ int main() {
 	MSG msg;
 	//Need to investigate why the GetMessage funcation is not working, the while loop seems to not start
 	while (GetMessage(&msg, nullptr, 0, 0)) {
-		printf("In while loop in which we get message");
 		if (msg.message == WM_APP) {
 			printf("%c", (int)msg.wParam);
 			if (msg.wParam == 13)
