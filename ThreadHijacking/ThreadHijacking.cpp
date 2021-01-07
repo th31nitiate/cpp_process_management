@@ -28,7 +28,8 @@ void __declspec(naked) InjectedFuncation() {
 
 
 bool DoInjection(HANDLE hProcess, HANDLE hThread, PCSTR dllPath) {
-#ifndef _WIN64
+//It turns out the issue was caused by a typo in the following line 
+#ifdef _WIN64 
 	BYTE code[] = {
 		0x48, 0x83, 0xec, 0x28,
 		0x48, 0x89, 0x44, 0x24, 0x18,
