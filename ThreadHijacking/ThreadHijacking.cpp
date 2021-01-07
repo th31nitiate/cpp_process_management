@@ -40,13 +40,13 @@ bool DoInjection(HANDLE hProcess, HANDLE hThread, PCSTR dllPath) {
 		0x48, 0x8b, 0x44, 0x24, 0x18,
 		0x48, 0x83, 0xc4, 0x28,
 		0x49, 0xbb, 0x33, 0x33, 0x33, 0x33, 0x33, 0x33, 0x33, 0x33,
-		0x41, 0xff, 0xe3,
+		0x41, 0xff, 0xe3 //comma place here cause issues in the shellcode
 	};
 #else
 	BYTE code[] = {
 		0x60,
-		0x68, 0x11, 0x11, 0x11, 0x11, 0x11,
-		0xb8, 0x22, 0x22, 0x22, 0x22, 0x22,
+		0x68, 0x11, 0x11, 0x11, 0x11, //Too many bytes where places here
+		0xb8, 0x22, 0x22, 0x22, 0x22, 
 		0xff, 0xd0,
 		0x61,
 		0x68, 0x33, 0x33, 0x33, 0x33,
@@ -90,8 +90,8 @@ bool DoInjection(HANDLE hProcess, HANDLE hThread, PCSTR dllPath) {
 		ResumeThread(hThread);
 		return false;
 	}
-		
-	if (!WriteProcessMemory(hProcess, buffer + page_size / 2, dllPath, sizeof(dllPath), nullptr)) {
+																										
+	if (!WriteProcessMemory(hProcess, buffer + page_size / 2, dllPath, strlen(dllPath), nullptr)) {//strlen was a important reference
 		ResumeThread(hThread);
 		return false;
 	}
@@ -136,13 +136,14 @@ int GetFirstThreadInProcess(int pid) {
 	return tid;
 }
 
-int main(int argc, const char* argv[]) {
+int main(int argc, char* argv[]) {
 	if (argc < 3) {
 		printf("Usage: ThreadHijack <pid> <dllpath>\n");
 		return 0;
 	}
 
-	int pid = atoi(argv[1]);
+	//Initial issue with pid type
+	auto pid = atoi(argv[1]);
 
 	HANDLE hProcess = OpenProcess(PROCESS_VM_WRITE | PROCESS_VM_OPERATION, FALSE, pid);
 	if (!hProcess)
