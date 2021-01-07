@@ -24,7 +24,7 @@ BOOL WINAPI DllMain(HMODULE hModule, DWORD reason, PVOID) {
 
 
 extern "C" LRESULT CALLBACK HookFuncation(int code, WPARAM wParam, LPARAM lParam) {
-    printf("Running Hook funcation");
+    printf("Running Hook funcation\n");
     if (code == HC_ACTION) {
         auto msg = (MSG*)lParam;
         if (msg->message == WM_CHAR) {
@@ -37,7 +37,7 @@ extern "C" LRESULT CALLBACK HookFuncation(int code, WPARAM wParam, LPARAM lParam
 
 
 extern "C" void WINAPI SetNotificationThread(DWORD threadId, HHOOK hHook) {
-    printf("Running set notification thread!");
     g_ThreadId = threadId;
     g_hHook = hHook;
+    printf("Running setnotification %i and passed in value: %i!\n", g_ThreadId, threadId);
 }
